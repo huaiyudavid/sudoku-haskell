@@ -40,3 +40,9 @@ printRow row = printf "%d %d %d | %d %d %d | %d %d %d \n"
            (row!!6)
            (row!!7)
            (row!!8)
+
+getValue :: [[Int]] -> Int -> Int -> Int
+getValue board row col = (board!!row)!!col
+
+--setValue :: [[Int]] -> [[Int]]
+--not sure how to do this yet
