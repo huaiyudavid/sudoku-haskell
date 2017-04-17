@@ -1,4 +1,4 @@
-TARGETS=hello
+TARGETS=sudoku
 
 %: %.hs
 	ghc -o $@ --make $<
