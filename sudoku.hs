@@ -1,11 +1,16 @@
 import Text.Printf
+import Data.Time
 
 main = do 
     putStrLn "Please input file name of board:"
     filename <- getLine
+    start <- getCurrentTime
     file <- readFile filename
     let board = getBoardFromFile file
     printBoard board
+    end <- getCurrentTime
+    putStrLn "Time Elapsed:"
+    print (diffUTCTime end start)
 
 getBoardFromFile :: String -> [[Int]]
 getBoardFromFile file = map (map read) $ map words $ lines file
