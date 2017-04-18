@@ -1,5 +1,6 @@
 import Text.Printf
 import Data.Time
+import Data.Sequence
 
 main = do 
     putStrLn "Please input file name of board:"
@@ -12,37 +13,37 @@ main = do
     putStrLn "Time Elapsed:"
     print (diffUTCTime end start)
 
-getBoardFromFile :: String -> [[Int]]
-getBoardFromFile file = map (map read) $ map words $ lines file
+getBoardFromFile :: String -> Seq (Seq Int)
+getBoardFromFile file = fromList $ map fromList $ map (map read) $ map words $ lines file
 
-printBoard :: [[Int]] -> IO ()
+printBoard :: Seq (Seq Int) -> IO ()
 printBoard board = do
-    printRow (board!!0)
-    printRow (board!!1)
-    printRow (board!!2)
+    printRow (index board 0)
+    printRow (index board 1)
+    printRow (index board 2)
     putStrLn "------+-------+------"
-    printRow (board!!3)
-    printRow (board!!4)
-    printRow (board!!5)
+    printRow (index board 3)
+    printRow (index board 4)
+    printRow (index board 5)
     putStrLn "------+-------+------"
-    printRow (board!!6)
-    printRow (board!!7)
-    printRow (board!!8)
+    printRow (index board 6)
+    printRow (index board 7)
+    printRow (index board 8)
 
-printRow :: [Int] -> IO ()
+printRow :: Seq Int -> IO ()
 printRow row = printf "%d %d %d | %d %d %d | %d %d %d \n"
-           (row!!0)
-           (row!!1)
-           (row!!2)
-           (row!!3)
-           (row!!4)
-           (row!!5)
-           (row!!6)
-           (row!!7)
-           (row!!8)
+           (index row 0)
+           (index row 1)
+           (index row 2)
+           (index row 3)
+           (index row 4)
+           (index row 5)
+           (index row 6)
+           (index row 7)
+           (index row 8)
 
-getValue :: [[Int]] -> Int -> Int -> Int
-getValue board row col = (board!!row)!!col
+getValue :: Seq (Seq Int) -> Int -> Int -> Int
+getValue board row col = index (index board row) col
 
---setValue :: [[Int]] -> [[Int]]
---not sure how to do this yet
+setValue :: Seq (Seq Int) -> Int -> Int -> Int -> Seq (Seq Int)
+setValue board row col val = update row (update col val (index board row)) board
