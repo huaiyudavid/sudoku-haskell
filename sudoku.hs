@@ -26,6 +26,9 @@ main = do
     start <- getCurrentTime
     file <- readFile filename
     let board = getBoardFromFile file
+    putStrLn "Your board is:"
+    printBoard board
+    putStrLn "\nSolution:"
     let solved = solve board 0 0 1
     if null solved then putStrLn "Board is unsolvable." else printBoard solved
     end <- getCurrentTime
