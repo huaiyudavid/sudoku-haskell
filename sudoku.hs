@@ -9,9 +9,11 @@
     Description: A program to solve a sudoku puzzle using recursive backtracking search.
 -}
 
+import Prelude hiding (take, drop, null)
 import Text.Printf
 import Data.Time
 import Data.Sequence
+import Data.Foldable hiding (null)
 
 {-
     main
@@ -24,10 +26,57 @@ main = do
     start <- getCurrentTime
     file <- readFile filename
     let board = getBoardFromFile file
-    printBoard board
+    printBoard (solve board 0 0 1)
     end <- getCurrentTime
     putStrLn "Time Elapsed:"
     print (diffUTCTime end start)
+
+{-
+    solve
+    Returns the solved board if possible, otherwise an empty sequence
+-}
+solve :: Seq (Seq Int) -> Int -> Int -> Int-> Seq (Seq Int)
+solve board x y num
+    | (null board) = board
+    | (y > 8) = board
+    | (x > 8) = (solve board 0 (y+1) 1)
+    | (num > 9) = empty
+    | ((getValue board y x) > 0) = (solve board (x+1) y 1)
+    | (not (valid board x y num)) = (solve board x y (num + 1))
+    | otherwise = (let s = (solve (setValue board y x num) x y 1)
+        in (if (null s) then (solve board x y (num + 1)) else (s)))
+{-
+    valid
+    Returns true iff the square, row, col are all valid
+-}
+valid :: Seq (Seq Int) -> Int -> Int -> Int -> Bool
+valid board x y num = (rowValid board y num) && (colValid board x num) && (squareValid board (sqI x) (sqI y) num)
+
+{-
+    squareValid
+    Returns true iff num does not exist in the square containing
+        the specified spot (x, y)
+-}
+squareValid :: Seq (Seq Int) -> Int -> Int -> Int -> Bool
+squareValid board x y num = not (elem num (getSquare board x y))
+
+sqI :: Int -> Int
+sqI i = (quot i 3) * 3
+
+{-
+    rowValid
+    Returns true iff num does not exist in row 'row' of board
+-}
+rowValid :: Seq (Seq Int) -> Int -> Int -> Bool
+rowValid board row num = not (elem num (getRow board row))
+
+{-
+    colValid
+    Returns true iff num does not exist in column 'col' of board
+-}
+colValid :: Seq (Seq Int) -> Int -> Int -> Bool
+colValid board col num = not (elem num (getCol board col))
+
 
 {-
     getBoardFromFile
@@ -69,6 +118,27 @@ printRow row = printf "%d %d %d | %d %d %d | %d %d %d \n"
            (index row 6)
            (index row 7)
            (index row 8)
+
+{-
+    getSquare
+    Return the 3x3 square with (x,y) as the top left (inclusive)
+-}
+getSquare :: Seq (Seq Int) -> Int -> Int -> Seq Int
+getSquare board x y = (take 3 (drop x (getRow board y))) >< (take 3 (drop x (getRow board (y + 1)))) >< (take 3 (drop x (getRow board (y + 2))))
+
+{-
+    getRow
+    Return the specified row
+-}
+getRow :: Seq (Seq Int) -> Int -> Seq Int
+getRow board row = index board row
+
+{-
+    getCol
+    Return the specified column
+-}
+getCol :: Seq (Seq Int) -> Int -> Seq Int
+getCol board col = fromList (map (`index` col) (toList board))
 
 {-
     getValue
