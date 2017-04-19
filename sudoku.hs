@@ -1,7 +1,7 @@
 {-
     Names: Huaiyu Yang and Caleb Proffitt
-    VUnet ids: yangh9 and 
-    Emails: huaiyu.yang@vanderbilt.edu and 
+    VUnet ids: yangh9 and proffich
+    Emails: huaiyu.yang@vanderbilt.edu and caleb.h.proffitt@vanderbilt.edu
     Class: CS3270
     Date: 4/17/2017
     Honor Statement: We did not give nor receive aid on this assignment.
@@ -26,7 +26,8 @@ main = do
     start <- getCurrentTime
     file <- readFile filename
     let board = getBoardFromFile file
-    printBoard (solve board 0 0 1)
+    let solved = solve board 0 0 1
+    if null solved then putStrLn "Board is unsolvable." else printBoard solved
     end <- getCurrentTime
     putStrLn "Time Elapsed:"
     print (diffUTCTime end start)
